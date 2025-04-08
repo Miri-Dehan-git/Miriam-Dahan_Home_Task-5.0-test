@@ -26,16 +26,14 @@ const getAllOrders=async(req,res)=>{
     }
 }
 const getOrderBySupplierID = async (req, res) => {
-    const { _id } = req.params; // ספק ה-ID
+    const { _id } = req.params; 
     try {
-      // חיפוש הזמנות לפי ה-supplierID
       const orders = await Order.find({ supplierId: _id }).lean();
   
       if (orders.length === 0) {
         return res.status(400).json({ message: "There are no orders for this supplier" });
       }
   
-      // החזרת ההזמנות
       res.json(orders);
     } catch (error) {
       console.error(error);

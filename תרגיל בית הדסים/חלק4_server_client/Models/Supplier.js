@@ -7,10 +7,12 @@ const productSchema = new mongoose.Schema({
 });
 
 const supplierSchema = new mongoose.Schema({
-  companyName: String,
-  phone: String,
-  representativeName: String,
-  products: [productSchema]  // שדה המוצרים יהיה מערך של אובייקטים מהסוג productSchema
+  companyName: { type: String, required: true },
+  phone: { type: String, required: true },
+  representativeName: { type: String, required: true },
+  products: [productSchema]
+}, {
+  timestamps: true 
 });
 
 module.exports = mongoose.model('Supplier', supplierSchema);

@@ -1,27 +1,24 @@
-const {getAllSuppliers,addSupplier}=require("../Controllers/SupplierController")
-const express=require("express")
-const router =express.Router()
-const Supplier=require("../Models/Supplier")
+const express = require("express");
+const router = express.Router();
+const { 
+  getAllSuppliers, 
+  addSupplier, 
+  loginSupplier, 
+  registerSupplier 
+} = require("../Controllers/SupplierController");
 
-router.post('/',addSupplier)
-router.get('/',getAllSuppliers)
-router.post('/login', async (req, res) => {
-    const {companyName,phone} = req.body;
-  
-    try {
-      // חיפוש ספק לפי טלפון ושם חברה
-      const supplier = await Supplier.findOne({companyName,phone});
-  
-      if (supplier) {
-        // אם נמצא ספק תואם, נחזיר תשובה חיובית
-        res.json({ success: true, message: 'Login successful', supplierId:supplier._id });
-      } else {
-        // אם לא נמצא ספק תואם
-        res.json({ success: false, message: 'No matching supplier found' });
-      }
-    } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-  });
-module.exports=router
+const authenticateSupplierToken = require("../middleware/authMiddleware");
+const authenticateOwnerToken = require("../middleware/authOwner");
+
+// ✅ יצירת ספק חדש – נניח שרק בעל מכולת יכול להוסיף ספקים
+router.post('/', addSupplier);
+
+// ✅ התחברות ספק – פתוח
+router.post('/login', loginSupplier);
+
+// ✅ הרשמה – פתוח
+router.post('/register', registerSupplier);
+
+// ✅ שליפת כל הספקים – רק בעל מכולת יכול לראות
+router.get('/', authenticateOwnerToken, getAllSuppliers);
+module.exports = router;
